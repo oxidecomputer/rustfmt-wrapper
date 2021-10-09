@@ -1,0 +1,21 @@
+[package]
+name = "rustfmt-wrapper"
+version = "0.1.0"
+authors = ["Adam H. Leventhal <ahl@oxide.computer>"]
+edition = "2018"
+license = "Apache-2.0"
+description = "Library wrapper around rustfmt for use by code generators"
+repository = "https://github.com/oxidecomputer/rustfmt-wrapper"
+readme = "README.md"
+keywords = ["rustfmt"]
+categories = ["development-tools",
+              "development-tools::procedural-macro-helpers"]
+
+[dependencies]
+toolchain_find = "0.2.0"
+thiserror = "1.0.25"
+tempfile = "3.2.0"
+
+[dev-dependencies]
+quote = "1.0.9"
+newline-converter = "0.2.0"
