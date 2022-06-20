@@ -2,142 +2,178 @@
 
 use serde::Serialize;
 
-/// `rustfmt` configuration.
-///
-/// See the [`rustfmt` documentation](https://rust-lang.github.io/rustfmt)
-/// for the descriptions of these stable and non-stable options.
-#[derive(Serialize, Default)]
-pub struct Config {
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub max_width: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub hard_tabs: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub tab_spaces: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub newline_style: Option<NewlineStyle>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub indent_style: Option<IndentStyle>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub use_small_heuristics: Option<Heuristics>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub fn_call_width: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub attr_fn_like_width: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub struct_lit_width: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub struct_variant_width: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub array_width: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub chain_width: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub single_line_if_else_max_width: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub wrap_comments: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub format_code_in_doc_comments: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub comment_width: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub normalize_comments: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub normalize_doc_attributes: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub format_strings: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub format_macro_matchers: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub format_macro_bodies: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub hex_literal_case: Option<HexLiteralCase>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub empty_item_single_line: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub struct_lit_single_line: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub fn_single_line: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub where_single_line: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub imports_indent: Option<IndentStyle>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub imports_layout: Option<ListTactic>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub imports_granularity: Option<ImportGranularity>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub group_imports: Option<GroupImportsTactic>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub merge_imports: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub reorder_imports: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub reorder_modules: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub reorder_impl_items: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub type_punctuation_density: Option<TypeDensity>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub space_before_colon: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub space_after_colon: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub spaces_around_ranges: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub binop_separator: Option<SeparatorPlace>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub remove_nested_parens: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub combine_control_expr: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub short_array_element_width_threshold: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub overflow_delimited_expr: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub struct_field_align_threshold: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub enum_discrim_align_threshold: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub match_arm_blocks: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub match_arm_leading_pipes: Option<MatchArmLeadingPipe>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub force_multiline_blocks: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub fn_args_layout: Option<Density>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub brace_style: Option<BraceStyle>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub control_brace_style: Option<ControlBraceStyle>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub trailing_semicolon: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub trailing_comma: Option<SeparatorTactic>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub match_block_trailing_comma: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub blank_lines_upper_bound: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub blank_lines_lower_bound: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub edition: Option<Edition>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub version: Option<Version>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub inline_attribute_width: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub format_generated_files: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub merge_derives: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub use_try_shorthand: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub use_field_init_shorthand: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub force_explicit_abi: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub condense_wildcard_suffixes: Option<bool>,
+// Process the configuration options lifted from the rustfmt repo. Note that
+// the default value is ignored, but left in to simplify updates.
+macro_rules! create_config {
+    ($($i:ident: $ty:ty, $def:expr, $stb:expr, $( $dstring:expr ),+ );+ $(;)*) => {
+        /// `rustfmt` configuration.
+        ///
+        /// See the [`rustfmt` documentation](https://rust-lang.github.io/rustfmt)
+        /// for the descriptions of these stable and non-stable options.
+        #[derive(Serialize, Default)]
+        pub struct Config {
+            $(
+                $(
+                    #[doc = $dstring]
+                )*
+                #[serde(skip_serializing_if = "Option::is_none")]
+                pub $i: Option<$ty>,
+            )*
+        }
+
+        impl Config {
+            pub(crate) fn unstable(&self) -> bool {
+                false
+                $(
+                    // Not stable and explicitly set.
+                    || (!$stb && self.$i.is_some())
+                )*
+            }
+
+            pub(crate) fn list_unstable(&self) -> String {
+                let mut list = Vec::new();
+                $(
+                    if !$stb && self.$i.is_some() {
+                        list.push(stringify!($i));
+                    }
+                )*
+                list.join(", ")
+            }
+        }
+    };
+}
+
+// Per https://github.com/rust-lang/rustfmt/blob/master/src/config/mod.rs
+// ... skipping the section titled "Not user-facing" and "Control options".
+//
+// This macro defines configuration options used in rustfmt. Each option
+// is defined as follows:
+//
+// `name: value type, default value, is stable, description;`
+create_config! {
+    // Fundamental stuff
+    max_width: usize, 100, true, "Maximum width of each line";
+    hard_tabs: bool, false, true, "Use tab characters for indentation, spaces for alignment";
+    tab_spaces: usize, 4, true, "Number of spaces per tab";
+    newline_style: NewlineStyle, NewlineStyle::Auto, true, "Unix or Windows line endings";
+    indent_style: IndentStyle, IndentStyle::Block, false, "How do we indent expressions or items";
+
+    // Width Heuristics
+    use_small_heuristics: Heuristics, Heuristics::Default, true, "Whether to use different \
+        formatting for items and expressions if they satisfy a heuristic notion of 'small'";
+    fn_call_width: usize, 60, true, "Maximum width of the args of a function call before \
+        falling back to vertical formatting.";
+    attr_fn_like_width: usize, 70, true, "Maximum width of the args of a function-like \
+        attributes before falling back to vertical formatting.";
+    struct_lit_width: usize, 18, true, "Maximum width in the body of a struct lit before \
+        falling back to vertical formatting.";
+    struct_variant_width: usize, 35, true, "Maximum width in the body of a struct variant before \
+        falling back to vertical formatting.";
+    array_width: usize, 60, true,  "Maximum width of an array literal before falling \
+        back to vertical formatting.";
+    chain_width: usize, 60, true, "Maximum length of a chain to fit on a single line.";
+    single_line_if_else_max_width: usize, 50, true, "Maximum line length for single line if-else \
+        expressions. A value of zero means always break if-else expressions.";
+
+    // Comments. macros, and strings
+    wrap_comments: bool, false, false, "Break comments to fit on the line";
+    format_code_in_doc_comments: bool, false, false, "Format the code snippet in doc comments.";
+    doc_comment_code_block_width: usize, 100, false, "Maximum width for code snippets in doc \
+        comments. No effect unless format_code_in_doc_comments = true";
+    comment_width: usize, 80, false,
+        "Maximum length of comments. No effect unless wrap_comments = true";
+    normalize_comments: bool, false, false, "Convert /* */ comments to // comments where possible";
+    normalize_doc_attributes: bool, false, false, "Normalize doc attributes as doc comments";
+    format_strings: bool, false, false, "Format string literals where necessary";
+    format_macro_matchers: bool, false, false,
+        "Format the metavariable matching patterns in macros";
+    format_macro_bodies: bool, true, false, "Format the bodies of macros";
+    hex_literal_case: HexLiteralCase, HexLiteralCase::Preserve, false,
+        "Format hexadecimal integer literals";
+
+    // Single line expressions and items
+    empty_item_single_line: bool, true, false,
+        "Put empty-body functions and impls on a single line";
+    struct_lit_single_line: bool, true, false,
+        "Put small struct literals on a single line";
+    fn_single_line: bool, false, false, "Put single-expression functions on a single line";
+    where_single_line: bool, false, false, "Force where-clauses to be on a single line";
+
+    // Imports
+    imports_indent: IndentStyle, IndentStyle::Block, false, "Indent of imports";
+    imports_layout: ListTactic, ListTactic::Mixed, false, "Item layout inside a import block";
+    imports_granularity: ImportGranularity, ImportGranularity::Preserve, false,
+        "Merge or split imports to the provided granularity";
+    group_imports: GroupImportsTactic, GroupImportsTactic::Preserve, false,
+        "Controls the strategy for how imports are grouped together";
+    merge_imports: bool, false, false, "(deprecated: use imports_granularity instead)";
+
+    // Ordering
+    reorder_imports: bool, true, true, "Reorder import and extern crate statements alphabetically";
+    reorder_modules: bool, true, true, "Reorder module statements alphabetically in group";
+    reorder_impl_items: bool, false, false, "Reorder impl items";
+
+    // Spaces around punctuation
+    type_punctuation_density: TypeDensity, TypeDensity::Wide, false,
+        "Determines if '+' or '=' are wrapped in spaces in the punctuation of types";
+    space_before_colon: bool, false, false, "Leave a space before the colon";
+    space_after_colon: bool, true, false, "Leave a space after the colon";
+    spaces_around_ranges: bool, false, false, "Put spaces around the  .. and ..= range operators";
+    binop_separator: SeparatorPlace, SeparatorPlace::Front, false,
+        "Where to put a binary operator when a binary expression goes multiline";
+
+    // Misc.
+    remove_nested_parens: bool, true, true, "Remove nested parens";
+    combine_control_expr: bool, true, false, "Combine control expressions with function calls";
+    short_array_element_width_threshold: usize, 10, true,
+        "Width threshold for an array element to be considered short";
+    overflow_delimited_expr: bool, false, false,
+        "Allow trailing bracket/brace delimited expressions to overflow";
+    struct_field_align_threshold: usize, 0, false,
+        "Align struct fields if their diffs fits within threshold";
+    enum_discrim_align_threshold: usize, 0, false,
+        "Align enum variants discrims, if their diffs fit within threshold";
+    match_arm_blocks: bool, true, false, "Wrap the body of arms in blocks when it does not fit on \
+        the same line with the pattern of arms";
+    match_arm_leading_pipes: MatchArmLeadingPipe, MatchArmLeadingPipe::Never, true,
+        "Determines whether leading pipes are emitted on match arms";
+    force_multiline_blocks: bool, false, false,
+        "Force multiline closure bodies and match arms to be wrapped in a block";
+    fn_args_layout: Density, Density::Tall, true,
+        "Control the layout of arguments in a function";
+    brace_style: BraceStyle, BraceStyle::SameLineWhere, false, "Brace style for items";
+    control_brace_style: ControlBraceStyle, ControlBraceStyle::AlwaysSameLine, false,
+        "Brace style for control flow constructs";
+    trailing_semicolon: bool, true, false,
+        "Add trailing semicolon after break, continue and return";
+    trailing_comma: SeparatorTactic, SeparatorTactic::Vertical, false,
+        "How to handle trailing commas for lists";
+    match_block_trailing_comma: bool, false, true,
+        "Put a trailing comma after a block based match arm (non-block arms are not affected)";
+    blank_lines_upper_bound: usize, 1, false,
+        "Maximum number of blank lines which can be put between items";
+    blank_lines_lower_bound: usize, 0, false,
+        "Minimum number of blank lines which must be put between items";
+    edition: Edition, Edition::Edition2015, true, "The edition of the parser (RFC 2052)";
+    version: Version, Version::One, false, "Version of formatting rules";
+    inline_attribute_width: usize, 0, false,
+        "Write an item and its attribute on the same line \
+        if their combined width is below a threshold";
+    format_generated_files: bool, true, false, "Format generated files";
+
+    // Options that can change the source code beyond whitespace/blocks (somewhat linty things)
+    merge_derives: bool, true, true, "Merge multiple `#[derive(...)]` into a single one";
+    use_try_shorthand: bool, false, true, "Replace uses of the try! macro by the ? shorthand";
+    use_field_init_shorthand: bool, false, true, "Use field initialization shorthand if possible";
+    force_explicit_abi: bool, true, true, "Always print the abi for extern items";
+    condense_wildcard_suffixes: bool, false, false, "Replace strings of _ wildcards by a single .. \
+                                                     in tuple patterns";
+
+    // Control options (changes the operation of rustfmt, rather than the formatting)
+    // [..] deleted
+
+    // Not user-facing
+    // [..] deleted
 }
 
 macro_rules! make_enum {

@@ -28,6 +28,8 @@ jobs:
         os: [ ubuntu-18.04, windows-2019, macos-10.15 ]
     steps:
     - uses: actions/checkout@v2
+    - name: Install nightly
+      run: rustup install nightly
     - name: Build
       run: cargo build --tests --verbose
     - name: Run tests

@@ -12,5 +12,28 @@ let codegen = quote::quote!{ struct Foo { bar: String } };
 let formatted: String = rustfmt_wrapper::rustfmt(codegen).unwrap();
 ```
 
-Thanks to David Tolnay for so many tools including `cargo-expand` from which
-this borrows.
+If you need more control over the **vast** array of [`rustfmt` configuration
+options](https://rust-lang.github.io/rustfmt), you can use the second form:
+
+```rust
+let codegen = quote::quote!{
+    async fn go() {
+        let _ = Client::new().operation_id().send().await?;
+    }
+};
+let config = Config {
+    max_width: Some(45),
+    ..Default::default()
+};
+
+let narrow_formatted = rustfmt_config(config, codegen).unwrap();
+```
+
+Note that in order to use unstable configuration options, you will need to have
+a the nightly version of `rustfmt` installed.
+
+---
+
+Thanks to David Tolnay for so many tools including
+[`cargo-expand`](https://github.com/dtolnay/cargo-expand) from which this
+borrows.

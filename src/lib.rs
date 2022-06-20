@@ -25,6 +25,9 @@ pub enum Error {
     /// Command `rustfmt` produced an error at runtime.
     #[error("rustfmt runtime error")]
     Rustfmt(String),
+    /// Nightly channel required, but not found.
+    #[error("nightly channel required for unstable options")]
+    Unstable(String),
     /// Error with file IO
     #[error(transparent)]
     IO(#[from] std::io::Error),
@@ -34,12 +37,10 @@ pub enum Error {
 }
 
 /// Use the `rustfmt` command to format the input.
-///
-/// The only non-default `rustfmt` configuration is `wrap_comments = true`.
 pub fn rustfmt<T: ToString>(input: T) -> Result<String, Error> {
+    // The only rustfmt default we override is edition = 2018 (vs 2015)
     let config = config::Config {
         edition: Some(config::Edition::Edition2018),
-        wrap_comments: Some(true),
         ..Default::default()
     };
     rustfmt_config(config, input)
@@ -68,8 +69,13 @@ pub fn rustfmt_config<T: ToString>(mut config: config::Config, input: T) -> Resu
 
     let rustfmt = which_rustfmt().ok_or(Error::NoRustfmt)?;
 
+    let mut args = vec![format!("--config-path={}", outdir.path().to_str().unwrap())];
+    if config.unstable() {
+        args.push("--unstable-features".to_string())
+    }
+
     let mut command = Command::new(&rustfmt)
-        .arg(format!("--config-path={}", outdir.path().to_str().unwrap()))
+        .args(args)
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
@@ -87,7 +93,12 @@ pub fn rustfmt_config<T: ToString>(mut config: config::Config, input: T) -> Resu
     if output.status.success() {
         Ok(String::from_utf8(output.stdout)?)
     } else {
-        Err(Error::Rustfmt(String::from_utf8(output.stderr)?))
+        let err_str = String::from_utf8(output.stderr)?;
+        if err_str.contains("Unrecognized option: 'unstable-features'") {
+            Err(Error::Unstable(config.list_unstable()))
+        } else {
+            Err(Error::Rustfmt(err_str))
+        }
     }
 }
 
