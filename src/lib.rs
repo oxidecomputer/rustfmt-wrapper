@@ -15,9 +15,7 @@ use std::{
 
 use thiserror::Error;
 
-mod conf;
-
-pub use conf::config;
+pub mod config;
 
 #[derive(Error, Debug)]
 pub enum Error {
@@ -153,10 +151,7 @@ struct Foo {
     fn test_narrow_call() {
         let code = quote! {
             async fn go() {
-                let _ = Client::new()
-                    .operation_id()
-                    .send()
-                    .await?;
+                let _ = Client::new().operation_id().send().await?;
             }
         };
 
