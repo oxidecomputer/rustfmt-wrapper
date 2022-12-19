@@ -19,5 +19,5 @@ toml = "0.5.9"
 toolchain_find = "0.2.0"
 
 [dev-dependencies]
-quote = "1.0.21"
+quote = "1.0.23"
 newline-converter = "0.2.2"
