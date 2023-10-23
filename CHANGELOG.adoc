@@ -15,6 +15,8 @@
 
 https://github.com/oxidecomputer/rustfmt-wrapper/compare/v0.2.0\...HEAD[Full list of commits]
 
+* Update dependencies
+
 == 0.2.0 (released 2022-06-21)
 
 https://github.com/oxidecomputer/rustfmt-wrapper/compare/v0.1.0\...v0.2.0[Full list of commits]
