@@ -13,7 +13,11 @@
 
 == Unreleased changes (release date TBD)
 
-https://github.com/oxidecomputer/rustfmt-wrapper/compare/v0.2.0\...HEAD[Full list of commits]
+https://github.com/oxidecomputer/rustfmt-wrapper/compare/v0.2.1\...HEAD[Full list of commits]
+
+== 0.2.1 (released 2023-10-23)
+
+https://github.com/oxidecomputer/rustfmt-wrapper/compare/v0.2.0\...v0.2.1[Full list of commits]
 
 * Update dependencies
 
