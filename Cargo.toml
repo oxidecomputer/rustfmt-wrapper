@@ -13,7 +13,7 @@ categories = ["development-tools",
 
 [dependencies]
 serde = { version = "1", features = ["derive"] }
-tempfile = "3.8.0"
+tempfile = "3.8.1"
 thiserror = "1.0.50"
 toml = "0.8.4"
 toolchain_find = "0.4.0"
