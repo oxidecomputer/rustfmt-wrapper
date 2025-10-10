@@ -103,16 +103,12 @@ pub fn rustfmt_config<T: ToString>(mut config: config::Config, input: T) -> Resu
 }
 
 fn locate_rustfmt() -> Option<PathBuf> {
-    match env::var_os("RUSTFMT") {
-        Some(which) => {
-            if which.is_empty() {
-                None
-            } else {
-                Some(PathBuf::from(which))
-            }
-        }
-        None => toolchain_find::find_installed_component("rustfmt"),
-    }
+    env::var_os("RUSTFMT")
+        .filter(|s| !s.is_empty())
+        .map(PathBuf::from)
+        .or_else(|| toolchain_find::find_installed_component("rustfmt"))
+        .or_else(|| which::which("rustfmt").ok())
+        .and_then(|p| p.canonicalize().ok())
 }
 
 #[cfg(test)]
