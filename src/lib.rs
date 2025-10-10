@@ -67,7 +67,7 @@ pub fn rustfmt_config<T: ToString>(mut config: config::Config, input: T) -> Resu
         toml::to_string_pretty(&config).unwrap(),
     )?;
 
-    let rustfmt = which_rustfmt().ok_or(Error::NoRustfmt)?;
+    let rustfmt = locate_rustfmt().ok_or(Error::NoRustfmt)?;
 
     let mut args = vec![format!("--config-path={}", outdir.path().to_str().unwrap())];
     if config.unstable() {
@@ -102,7 +102,7 @@ pub fn rustfmt_config<T: ToString>(mut config: config::Config, input: T) -> Resu
     }
 }
 
-fn which_rustfmt() -> Option<PathBuf> {
+fn locate_rustfmt() -> Option<PathBuf> {
     match env::var_os("RUSTFMT") {
         Some(which) => {
             if which.is_empty() {
