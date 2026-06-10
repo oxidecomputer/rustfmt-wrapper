@@ -36,6 +36,11 @@ pub enum Error {
     Conversion(#[from] std::string::FromUtf8Error),
 }
 
+enum ToolchainFilter {
+    Nightly,
+    Any,
+}
+
 /// Use the `rustfmt` command to format the input.
 pub fn rustfmt<T: ToString>(input: T) -> Result<String, Error> {
     // The only rustfmt default we override is edition = 2018 (vs 2015)
@@ -67,7 +72,11 @@ pub fn rustfmt_config<T: ToString>(mut config: config::Config, input: T) -> Resu
         toml::to_string_pretty(&config).unwrap(),
     )?;
 
-    let rustfmt = which_rustfmt().ok_or(Error::NoRustfmt)?;
+    let rustfmt = if config.unstable() {
+        which_rustfmt(ToolchainFilter::Nightly).ok_or(Error::Unstable(config.list_unstable()))?
+    } else {
+        which_rustfmt(ToolchainFilter::Any).ok_or(Error::NoRustfmt)?
+    };
 
     let mut args = vec![format!("--config-path={}", outdir.path().to_str().unwrap())];
     if config.unstable() {
@@ -102,7 +111,7 @@ pub fn rustfmt_config<T: ToString>(mut config: config::Config, input: T) -> Resu
     }
 }
 
-fn which_rustfmt() -> Option<PathBuf> {
+fn which_rustfmt(toolchain: ToolchainFilter) -> Option<PathBuf> {
     match env::var_os("RUSTFMT") {
         Some(which) => {
             if which.is_empty() {
@@ -111,7 +120,10 @@ fn which_rustfmt() -> Option<PathBuf> {
                 Some(PathBuf::from(which))
             }
         }
-        None => toolchain_find::find_installed_component("rustfmt"),
+        None => match toolchain {
+            ToolchainFilter::Any => toolchain_find::find_installed_component("rustfmt"),
+            ToolchainFilter::Nightly => toolchain_find::find_nightly_installed_component("rustfmt"),
+        },
     }
 }
 
