@@ -74,6 +74,8 @@ create_config! {
     chain_width: usize, 60, true, "Maximum length of a chain to fit on a single line.";
     single_line_if_else_max_width: usize, 50, true, "Maximum line length for single line if-else \
         expressions. A value of zero means always break if-else expressions.";
+    single_line_let_else_max_width: usize, 0, true, "Maximum line length for single line let-else \
+        statements. A value of zero means always format the divergent `else` block over multiple lines.";
 
     // Comments. macros, and strings
     wrap_comments: bool, false, false, "Break comments to fit on the line";
@@ -88,8 +90,12 @@ create_config! {
     format_macro_matchers: bool, false, false,
         "Format the metavariable matching patterns in macros";
     format_macro_bodies: bool, true, false, "Format the bodies of macros";
+    skip_macro_invocations: Vec<String>, vec![], false,
+        "Skip formatting the bodies of macros invoked with the following names.";
     hex_literal_case: HexLiteralCase, HexLiteralCase::Preserve, false,
         "Format hexadecimal integer literals";
+    float_literal_trailing_zero: FloatLiteralTrailingZero, FloatLiteralTrailingZero::Preserve, false,
+        "Add or remove trailing zero in floating-point literals";
 
     // Single line expressions and items
     empty_item_single_line: bool, true, false,
@@ -137,10 +143,13 @@ create_config! {
         the same line with the pattern of arms";
     match_arm_leading_pipes: MatchArmLeadingPipe, MatchArmLeadingPipe::Never, true,
         "Determines whether leading pipes are emitted on match arms";
+    match_arm_indent: bool, true, false, "Determines whether match arms are indented";
     force_multiline_blocks: bool, false, false,
         "Force multiline closure bodies and match arms to be wrapped in a block";
     fn_args_layout: Density, Density::Tall, true,
-        "Control the layout of arguments in a function";
+        "Control the layout of arguments in a function (deprecated: use fn_params_layout instead)";
+    fn_params_layout: Density, Density::Tall, true,
+        "Control the layout of parameters in function signatures.";
     brace_style: BraceStyle, BraceStyle::SameLineWhere, false, "Brace style for items";
     control_brace_style: ControlBraceStyle, ControlBraceStyle::AlwaysSameLine, false,
         "Brace style for control flow constructs";
@@ -155,11 +164,15 @@ create_config! {
     blank_lines_lower_bound: usize, 0, false,
         "Minimum number of blank lines which must be put between items";
     edition: Edition, Edition::Edition2015, true, "The edition of the parser (RFC 2052)";
+    style_edition: StyleEdition, StyleEdition::Edition2015, true,
+        "The edition of the Style Guide (RFC 3338)";
     version: Version, Version::One, false, "Version of formatting rules";
     inline_attribute_width: usize, 0, false,
         "Write an item and its attribute on the same line \
         if their combined width is below a threshold";
     format_generated_files: bool, true, false, "Format generated files";
+    generated_marker_line_search_limit: usize, 10, false,
+        "Number of lines to check for a `@generated` marker when `format_generated_files` is enabled";
 
     // Options that can change the source code beyond whitespace/blocks (somewhat linty things)
     merge_derives: bool, true, true, "Merge multiple `#[derive(...)]` into a single one";
@@ -205,6 +218,13 @@ make_enum!(
 );
 make_enum!(SeparatorTactic, Always, Never, Vertical);
 make_enum!(Version, One, Two);
+make_enum!(
+    FloatLiteralTrailingZero,
+    Preserve,
+    Always,
+    IfNoPostfix,
+    Never
+);
 
 #[derive(Serialize)]
 pub enum Edition {
@@ -216,4 +236,18 @@ pub enum Edition {
     Edition2021,
     #[serde(rename = "2024")]
     Edition2024,
+}
+
+#[derive(Serialize)]
+pub enum StyleEdition {
+    #[serde(rename = "2015")]
+    Edition2015,
+    #[serde(rename = "2018")]
+    Edition2018,
+    #[serde(rename = "2021")]
+    Edition2021,
+    #[serde(rename = "2024")]
+    Edition2024,
+    #[serde(rename = "2027")]
+    Edition2027,
 }
