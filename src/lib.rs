@@ -1,4 +1,4 @@
-// Copyright 2022 Oxide Computer Company
+// Copyright 2026 Oxide Computer Company
 
 //! Use `rustfmt` to format generated code:
 //! ```
@@ -57,19 +57,9 @@ pub fn rustfmt_config<T: ToString>(mut config: config::Config, input: T) -> Resu
         config.edition = Some(config::Edition::Edition2018);
     }
 
-    let mut builder = tempfile::Builder::new();
-    builder.prefix("rustfmt-wrapper");
-    let outdir = builder.tempdir().expect("failed to create tmp file");
-
-    let rustfmt_config_path = outdir.as_ref().join("rustfmt.toml");
-    std::fs::write(
-        rustfmt_config_path,
-        toml::to_string_pretty(&config).unwrap(),
-    )?;
-
     let rustfmt = which_rustfmt().ok_or(Error::NoRustfmt)?;
 
-    let mut args = vec![format!("--config-path={}", outdir.path().to_str().unwrap())];
+    let mut args = vec![format!("--config={}", config.to_string())];
     if config.unstable() {
         args.push("--unstable-features".to_string())
     }

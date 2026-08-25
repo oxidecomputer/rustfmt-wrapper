@@ -1,6 +1,4 @@
-// Copyright 2022 Oxide Computer Company
-
-use serde::Serialize;
+// Copyright 2026 Oxide Computer Company
 
 // Process the configuration options lifted from the rustfmt repo. Note that
 // the default value is ignored, but left in to simplify updates.
@@ -10,13 +8,12 @@ macro_rules! create_config {
         ///
         /// See the [`rustfmt` documentation](https://rust-lang.github.io/rustfmt)
         /// for the descriptions of these stable and non-stable options.
-        #[derive(Serialize, Default)]
+        #[derive(Default)]
         pub struct Config {
             $(
                 $(
                     #[doc = $dstring]
                 )*
-                #[serde(skip_serializing_if = "Option::is_none")]
                 pub $i: Option<$ty>,
             )*
         }
@@ -38,6 +35,18 @@ macro_rules! create_config {
                     }
                 )*
                 list.join(", ")
+            }
+
+            pub (crate) fn to_string(&self) -> String {
+                let mut config = Vec::new();
+                $(
+                    if let Some(value) = &self.$i {
+                        config.push(
+                            format!("{}={}", stringify!($i), value.to_arg())
+                        );
+                    }
+                )*
+                config.join(",")
             }
         }
     };
@@ -191,11 +200,18 @@ create_config! {
 
 macro_rules! make_enum {
     ($name:ident $(, $v:ident)+) => {
-        #[derive(Serialize)]
         pub enum $name {
             $( $v, )*
         }
+        impl ToArg for $name {
+            fn to_arg(&self) -> String {
+                match self {
+                    $( Self::$v => stringify!($v).to_string(), )*
+                }
+            }
+        }
     };
+
 }
 
 make_enum!(NewlineStyle, Auto, Windows, Unix, Native);
@@ -226,28 +242,62 @@ make_enum!(
     Never
 );
 
-#[derive(Serialize)]
 pub enum Edition {
-    #[serde(rename = "2015")]
     Edition2015,
-    #[serde(rename = "2018")]
     Edition2018,
-    #[serde(rename = "2021")]
     Edition2021,
-    #[serde(rename = "2024")]
     Edition2024,
 }
 
-#[derive(Serialize)]
+impl ToArg for Edition {
+    fn to_arg(&self) -> String {
+        match self {
+            Self::Edition2015 => "2015".to_string(),
+            Self::Edition2018 => "2018".to_string(),
+            Self::Edition2021 => "2021".to_string(),
+            Self::Edition2024 => "2024".to_string(),
+        }
+    }
+}
+
 pub enum StyleEdition {
-    #[serde(rename = "2015")]
     Edition2015,
-    #[serde(rename = "2018")]
     Edition2018,
-    #[serde(rename = "2021")]
     Edition2021,
-    #[serde(rename = "2024")]
     Edition2024,
-    #[serde(rename = "2027")]
     Edition2027,
+}
+
+impl ToArg for StyleEdition {
+    fn to_arg(&self) -> String {
+        match self {
+            Self::Edition2015 => "2015".to_string(),
+            Self::Edition2018 => "2018".to_string(),
+            Self::Edition2021 => "2021".to_string(),
+            Self::Edition2024 => "2024".to_string(),
+            Self::Edition2027 => "2027".to_string(),
+        }
+    }
+}
+
+trait ToArg {
+    fn to_arg(&self) -> String;
+}
+
+impl ToArg for Vec<String> {
+    fn to_arg(&self) -> String {
+        format!("[{}]", self.join(","))
+    }
+}
+
+impl ToArg for usize {
+    fn to_arg(&self) -> String {
+        self.to_string()
+    }
+}
+
+impl ToArg for bool {
+    fn to_arg(&self) -> String {
+        self.to_string()
+    }
 }

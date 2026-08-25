@@ -12,12 +12,9 @@ categories = ["development-tools",
               "development-tools::procedural-macro-helpers"]
 
 [dependencies]
-serde = { version = "1", features = ["derive"] }
-tempfile = "3.9.0"
-thiserror = "1.0.55"
-toml = "0.8.8"
-toolchain_find = "0.4.0"
+thiserror = "2.0.20"
+toolchain_find = "0.5.1"
 
 [dev-dependencies]
-quote = "1.0.35"
+quote = "1.0.47"
 newline-converter = "0.3.0"
