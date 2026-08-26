@@ -67,7 +67,7 @@ pub fn rustfmt_config<T: ToString>(mut config: config::Config, input: T) -> Resu
         toml::to_string_pretty(&config).unwrap(),
     )?;
 
-    let rustfmt = which_rustfmt().ok_or(Error::NoRustfmt)?;
+    let rustfmt = locate_rustfmt().ok_or(Error::NoRustfmt)?;
 
     let mut args = vec![format!("--config-path={}", outdir.path().to_str().unwrap())];
     if config.unstable() {
@@ -102,17 +102,13 @@ pub fn rustfmt_config<T: ToString>(mut config: config::Config, input: T) -> Resu
     }
 }
 
-fn which_rustfmt() -> Option<PathBuf> {
-    match env::var_os("RUSTFMT") {
-        Some(which) => {
-            if which.is_empty() {
-                None
-            } else {
-                Some(PathBuf::from(which))
-            }
-        }
-        None => toolchain_find::find_installed_component("rustfmt"),
-    }
+fn locate_rustfmt() -> Option<PathBuf> {
+    env::var_os("RUSTFMT")
+        .filter(|s| !s.is_empty())
+        .map(PathBuf::from)
+        .or_else(|| toolchain_find::find_installed_component("rustfmt"))
+        .or_else(|| which::which("rustfmt").ok())
+        .and_then(|p| p.canonicalize().ok())
 }
 
 #[cfg(test)]
