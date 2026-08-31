@@ -15,7 +15,7 @@ categories = ["development-tools",
 serde = { version = "1", features = ["derive"] }
 tempfile = "3.9.0"
 thiserror = "1.0.55"
-toml = "0.9.5"
+toml = "1.1.4"
 toolchain_find = "0.5.1"
 
 [dev-dependencies]
